@@ -1,0 +1,28 @@
+type User @model
+  @auth(rules:[
+    {allow:groups,groups:["Admin"]},
+    {allow:owner,ownerField:"username",operations:[read]}
+  ]){
+  id:ID!
+  username:String!
+  email:String!
+
+  orders: [Order] @connection(keyName:"byUser",fields:["id"])
+}
+
+type Thela @model{
+  id:ID!
+  type:String!
+  latitude:Float,
+  longitude:Float,
+  heading:Float,
+}
+type Order @model
+  @key(name:"byUser", fields:["userId"]){
+  id:ID!
+  userId:String!
+  user:User @connection(fields:["userId"])
+
+  ThelaId:String
+  thela:Thela @connection(fields:["thelaId"])
+}
